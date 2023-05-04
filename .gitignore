@@ -5,6 +5,8 @@
 *.v6.1
 *.lock
 *.vsidx
+package-lock.json
+dist/*
 # Visual Studio 2015
 .vs/config/applicationhost.config
 
