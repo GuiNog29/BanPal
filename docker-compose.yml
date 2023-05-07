@@ -1,0 +1,28 @@
+version: "3.4"
+
+services:
+  api:
+    build:
+      context: .
+      target: development
+    volumes:
+      - ./:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - '3000:3000'
+    command: npm run dev
+    depends_on: 
+     - db
+
+  db:
+    container_name: Database
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: 154826
+      POSTGRES_USER: root
+      POSTGRES_DB: BanPal
+    ports:
+      - '5432:5432'
+    volumes:
+      - ./pgdata:/var/lib/postgres/data
