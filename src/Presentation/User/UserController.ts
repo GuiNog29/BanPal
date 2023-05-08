@@ -30,7 +30,7 @@ export class UserController {
     const emailExist = await prisma.user.findUnique({ where: findEspecificUser(email) })
 
     if (emailExist)
-      return res.status(400).json({ message: 'Email already exists' })
+      return res.status(400).json({ message: 'Email already exists' });
 
     try {
       await bodyValidation.validate(req.body);
@@ -41,9 +41,11 @@ export class UserController {
           email: email,
           password: password
         }
-      })
+      });
 
-      return res.status(200).json({ message: 'User created successfully', newUser });
+      const bankAccount = await createBankAccount(0, newUser.id);
+
+      return res.status(200).json({ message: 'User created successfully', newUser, bankAccount });
     } catch (error) {
       const yupError = error as yup.ValidationError;
       return res.status(500).json({
@@ -59,11 +61,11 @@ export class UserController {
       const users = await prisma.user.findMany();
 
       if (users === undefined || users.length == 0)
-        return res.status(400).json({ message: 'There are no registered users' })
+        return res.status(400).json({ message: 'There are no registered users' });
 
-      return res.status(200).json({ message: 'Registered Users', users })
+      return res.status(200).json({ message: 'Registered Users', users });
     } catch (error) {
-      return res.status(500).json({ message: 'Error to get users' })
+      return res.status(500).json({ message: 'Error to get users' });
     }
   }
 
@@ -80,7 +82,9 @@ export class UserController {
       await bodyValidation.validate(req.body);
 
       const userUpdated = await prisma.user.update({
-        where: { id: Number(id) },
+        where: { 
+          id: Number(id)
+        },
         data: {
           name: name,
           email: email,
@@ -112,3 +116,15 @@ export class UserController {
     }
   }
 }
+
+async function createBankAccount(balance: number, userId: number){
+  const bankAccount = await prisma.account.create({
+    data: {
+      balance: balance,
+      userId: userId
+    }
+  });
+
+  return bankAccount;
+}
+

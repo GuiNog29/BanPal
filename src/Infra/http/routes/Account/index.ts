@@ -7,9 +7,9 @@ routes.get('/', (req, res) => {
   res.send('Hello, worldaaaa!');
 });
 
-routes.post('/account', new AccountController().create)
-routes.get('/account', new AccountController().get)
-routes.put('/account/:id', new AccountController().put)
-routes.delete('/account/:id', new AccountController().delete)
+routes.get('/account/balance/:id', new AccountController().getBankBalance);
+routes.put('/account/deposit/:id', new AccountController().bankDeposit);
+routes.put('/account/draft/:id', new AccountController().bankDraft);
+routes.delete('/account/deleteAccount/:id', new AccountController().deleteAccount);
 
 export default routes;
