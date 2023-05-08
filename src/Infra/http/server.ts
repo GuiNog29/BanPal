@@ -1,9 +1,11 @@
 import * as Swagger from 'swagger-ui-express';
+import * as dotenv from 'dotenv';
 import express from 'express';
 import routesAccount from './routes/Account';
 import routesUser from './routes/User';
 
 const app = express();
+dotenv.config();
 
 var options = {
   explorer: true,
@@ -23,11 +25,11 @@ var options = {
 
 app.use(express.json());
 
-app.use(routesAccount);
 app.use(routesUser);
+app.use(routesAccount);
 
 app.use('/docs', Swagger.serve, Swagger.setup(options));
 
-app.listen(3000, () => {
-  console.log('Server is running on http://localhost:3000');
+app.listen(process.env.PORT, () => {
+  console.log(`Server is running on http://localhost:${process.env.PORT}`);
 });
