@@ -4,12 +4,12 @@ import { AccountController } from "../../../../Presentation/Account/AccountContr
 const routes = Router();
 
 routes.get('/', (req, res) => {
-  res.send('Hello, worldaaaa!');
+  res.send('Hello, world!');
 });
 
-routes.get('/account/balance/:id', new AccountController().getBankBalance);
+routes.get('/account/balance', new AccountController().getBankBalance);
 routes.put('/account/deposit', new AccountController().bankDeposit);
-routes.put('/account/draft/:id', new AccountController().bankDraft);
-routes.delete('/account/deleteAccount/:id', new AccountController().deleteAccount);
+routes.put('/account/draft', new AccountController().bankDraft);
+routes.put('/account/transfer', new AccountController().bankTransfer);
 
 export default routes;
