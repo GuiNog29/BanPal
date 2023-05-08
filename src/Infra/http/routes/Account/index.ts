@@ -8,7 +8,7 @@ routes.get('/', (req, res) => {
 });
 
 routes.get('/account/balance/:id', new AccountController().getBankBalance);
-routes.put('/account/deposit/:id', new AccountController().bankDeposit);
+routes.put('/account/deposit', new AccountController().bankDeposit);
 routes.put('/account/draft/:id', new AccountController().bankDraft);
 routes.delete('/account/deleteAccount/:id', new AccountController().deleteAccount);
 
