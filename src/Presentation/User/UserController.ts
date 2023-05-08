@@ -1,3 +1,4 @@
+import { Account } from './../../Core/Account/Entity/Account';
 import { Request, Response } from "express";
 import { Prisma, PrismaClient } from "@prisma/client";
 import * as yup from 'yup';
@@ -16,7 +17,7 @@ const bodyValidation: yup.Schema<IUser> = yup.object().shape({
   password: yup.string().required().min(3)
 });
 
-const findEspecificUser = (email: string) => {
+const findEspecificUserEmail = (email: string) => {
   return Prisma.validator<Prisma.UserWhereUniqueInput>()({
     email,
   })
@@ -24,13 +25,15 @@ const findEspecificUser = (email: string) => {
 
 export class UserController {
 
-  async create(req: Request, res: Response) {
+  async createUser(req: Request, res: Response) {
     const { name, email, password } = req.body as IUser;
 
-    const emailExist = await prisma.user.findUnique({ where: findEspecificUser(email) })
+    const emailExist = await prisma.user.findUnique({ where: findEspecificUserEmail(email) })
 
     if (emailExist)
-      return res.status(400).json({ message: 'Email already exists' });
+      return res.status(400).json({
+        message: 'Email already exists'
+      });
 
     try {
       await bodyValidation.validate(req.body);
@@ -45,7 +48,9 @@ export class UserController {
 
       const bankAccount = await createBankAccount(0, newUser.id);
 
-      return res.status(200).json({ message: 'User created successfully', newUser, bankAccount });
+      return res.status(200).json({
+        message: 'User created successfully', newUser, bankAccount
+      });
     } catch (error) {
       const yupError = error as yup.ValidationError;
       return res.status(500).json({
@@ -56,34 +61,44 @@ export class UserController {
     }
   }
 
-  async get(req: Request, res: Response) {
+  async getAllUsers(req: Request, res: Response) {
     try {
-      const users = await prisma.user.findMany();
+      const users = await prisma.user.findMany({
+        include: {
+          account: true
+        }
+      });
 
       if (users === undefined || users.length == 0)
-        return res.status(400).json({ message: 'There are no registered users' });
+        return res.status(400).json({
+          message: 'There are no registered users'
+        });
 
-      return res.status(200).json({ message: 'Registered Users', users });
+      return res.status(200).json({
+        message: 'Registered Users', users
+      });
     } catch (error) {
-      return res.status(500).json({ message: 'Error to get users' });
+      return res.status(500).json({
+        message: 'Error to get users'
+      });
     }
   }
 
-  async put(req: Request, res: Response) {
-    const { id } = req.params;
+  async updateUser(req: Request, res: Response) {
+    const { userId } = req.query;
     const { name, email, password } = req.body as IUser;
 
-    const emailExist = await prisma.user.findUnique({ where: findEspecificUser(email) })
+    const userExist = await prisma.user.findUnique({ where: { id: Number(userId) } })
 
-    if (emailExist)
-      return res.status(400).json({ message: 'Email already exists' })
+    if (!userExist)
+      return res.status(400).json({ message: 'User not exists' });
 
     try {
       await bodyValidation.validate(req.body);
 
       const userUpdated = await prisma.user.update({
-        where: { 
-          id: Number(id)
+        where: {
+          id: Number(userId)
         },
         data: {
           name: name,
@@ -103,21 +118,25 @@ export class UserController {
     }
   }
 
-  async delete(req: Request, res: Response) {
-    const { id } = req.params;
+  async deleteUser(req: Request, res: Response) {
+    const { userId } = req.query;
 
     try {
       const deleted = await prisma.user.delete({
-        where: { id: Number(id) }
+        where: { id: Number(userId) }
       })
-      return res.status(200).json({ message: 'User deleted', deleted })
+      return res.status(200).json({
+        message: 'User deleted', deleted
+      })
     } catch (error) {
-      return res.status(500).json({ message: 'Error to delete user' })
+      return res.status(500).json({
+        message: 'Error to delete user'
+      })
     }
   }
 }
 
-async function createBankAccount(balance: number, userId: number){
+async function createBankAccount(balance: number, userId: number) {
   const bankAccount = await prisma.account.create({
     data: {
       balance: balance,
