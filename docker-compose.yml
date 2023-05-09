@@ -2,8 +2,10 @@ version: "3.4"
 
 services:
   api:
+    container_name: API
     build:
       context: .
+      dockerfile: Dockerfile
       target: development
     volumes:
       - ./:/usr/src/app
@@ -20,7 +22,6 @@ services:
     restart: always
     environment:
       POSTGRES_PASSWORD: 154826
-      POSTGRES_USER: root
       POSTGRES_DB: BanPal
     ports:
       - '5432:5432'
