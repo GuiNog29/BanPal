@@ -1,11 +1,9 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '../../../node_modules/.prisma/client';
 import { Request, Response } from "express";
 
 const prisma = new PrismaClient();
 
 export class AccountController {
-
-
   async getBankBalance(req: Request, res: Response) {
     const { userId } = req.query;
 

@@ -1,6 +1,5 @@
-import { Account } from './../../Core/Account/Entity/Account';
 import { Request, Response } from "express";
-import { Prisma, PrismaClient } from "@prisma/client";
+import { PrismaClient } from "../../../node_modules/.prisma/client";
 import * as yup from 'yup';
 
 const prisma = new PrismaClient();
@@ -17,18 +16,12 @@ const bodyValidation: yup.Schema<IUser> = yup.object().shape({
   password: yup.string().required().min(3)
 });
 
-const findEspecificUserEmail = (email: string) => {
-  return Prisma.validator<Prisma.UserWhereUniqueInput>()({
-    email,
-  })
-}
 
 export class UserController {
-
   async createUser(req: Request, res: Response) {
     const { name, email, password } = req.body as IUser;
 
-    const emailExist = await prisma.user.findUnique({ where: findEspecificUserEmail(email) })
+    const emailExist = await prisma.user.findUnique({ where: { email: email } })
 
     if (emailExist)
       return res.status(400).json({
