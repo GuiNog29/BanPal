@@ -1,4 +1,4 @@
-import { PrismaClient } from '../../../node_modules/.prisma/client';
+import { PrismaClient } from '.prisma/client';
 import { Request, Response } from "express";
 
 const prisma = new PrismaClient();
@@ -93,23 +93,29 @@ export class AccountController {
         }
       });
 
+      if (!accountSending)
+        return res.status(400).json({ message: 'Transfer account not exists' });
+
+      if (!accountReceiving)
+        return res.status(400).json({ message: 'Receiving account not exists' });
+
       accountSending!.balance -= Number(transferAmount)
       await prisma.account.update({
         where: {
-          id: Number(userIdSending)
+          userId: Number(userIdSending)
         },
         data: {
-          balance: accountSending!.balance,
+          balance: accountSending.balance,
         }
       });
 
       accountReceiving!.balance += Number(transferAmount);
       await prisma.account.update({
         where: {
-          id: Number(userIdReceiving)
+          userId: Number(userIdReceiving)
         },
         data: {
-          balance: accountReceiving!.balance,
+          balance: accountReceiving.balance,
         }
       });
 
@@ -117,6 +123,7 @@ export class AccountController {
         message: `Transfer of ${transferAmount} made successfully, you current balance is ${accountSending?.balance}`
       });
     } catch (error) {
+      console.log(error)
       return res.status(500).json({
         message: 'Error to transfer'
       });
