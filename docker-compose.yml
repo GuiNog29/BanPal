@@ -1,28 +1,13 @@
 version: "3.4"
 
 services:
-  api:
-    container_name: API
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: development
-    volumes:
-      - ./:/usr/src/app
-      - /usr/src/app/node_modules
-    ports:
-      - '3000:3000'
-    command: npm run dev
-    depends_on: 
-     - db
-
   db:
     container_name: Database
     image: postgres
     restart: always
     environment:
       POSTGRES_PASSWORD: 154826
-      POSTGRES_DB: BanPal
+      POSTGRES_DB: postgres
     ports:
       - '5432:5432'
     volumes:

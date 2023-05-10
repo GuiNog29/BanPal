@@ -1,0 +1,104 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "BanPal API",
+    "description": "BanPal is a tribute to me because I was a PayPal user but I never used it, just one day I was banned and they didn't tell me the reason, since then I haven't been able to create new accounts because of the ban",
+    "contact": {
+      "email": "guimathiasgui@gmail.com"
+    },
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/user/getAllUsers": {
+      "get": {
+        "summary": "Get All users registered",
+        "description": "Route responsible for get all users registered.",
+        "tags": ["User"],
+        "responses": {
+          
+        }
+      }
+    },
+    "/user/createUser": {
+      "post": {
+        "summary": "Create new user",
+        "description": "Route responsible for create a new user",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/updateUser": {
+      "get": {
+        "summary": "Obtém uma lista de usuários",
+        "description": "Retorna uma lista de todos os usuários cadastrados no sistema.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/deleteUser": {
+      "get": {
+        "summary": "Obtém uma lista de usuários",
+        "description": "Retorna uma lista de todos os usuários cadastrados no sistema.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
