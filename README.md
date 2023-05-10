@@ -13,3 +13,5 @@ npm run up:dev
 Esse comando vai iniciar o container docker com o banco de dados e iniciará a aplicação 
 Onde pode ser acessado a documentação da mesma em http://localhost:3000
 
+Para importar as requisições para um postman por exemplo. tem o arquivo BanPal.postman_collection.json que será baixado junto com o sistema
+
