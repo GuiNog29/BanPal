@@ -7,7 +7,9 @@ And i'm using for study and pratice
 Instalação
 Tendo docker instalado no seu PC, na raiz do projeto execute o seguinte comando
 
-npm run up:dev
+```shell
+docker-compose run --rm --service-ports app
+```
 
 Esse comando vai iniciar o container docker com o banco de dados e iniciará a aplicação 
 Onde pode ser acessado a documentação da mesma em http://localhost:3000
