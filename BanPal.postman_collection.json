@@ -1,0 +1,278 @@
+{
+	"info": {
+		"_postman_id": "7c5539b4-96af-4325-97bb-9f45b0405891",
+		"name": "BanPal",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "7203941"
+	},
+	"item": [
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Create User",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Ronaldo\",\r\n    \"email\": \"ronaldo@gmail.com\",\r\n    \"password\": \"1234\",\r\n    \"Account\": {\r\n        \"balance\": 0\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/user/createUser",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user",
+								"createUser"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Users",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/user/getAllUsers",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user",
+								"getAllUsers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update User",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Carlos Alberto\",\r\n    \"password\": \"123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/user/updateUser?userId=1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user",
+								"updateUser"
+							],
+							"query": [
+								{
+									"key": "userId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete User",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/user/deleteUser?userId=3",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user",
+								"deleteUser"
+							],
+							"query": [
+								{
+									"key": "userId",
+									"value": "3"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Account",
+			"item": [
+				{
+					"name": "GetBalance",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/account/balance?userId=1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"account",
+								"balance"
+							],
+							"query": [
+								{
+									"key": "userId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Deposit",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/account/deposit?userId=1&accountId=1&valueDeposit=100",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"account",
+								"deposit"
+							],
+							"query": [
+								{
+									"key": "userId",
+									"value": "1"
+								},
+								{
+									"key": "accountId",
+									"value": "1"
+								},
+								{
+									"key": "valueDeposit",
+									"value": "100"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Draft",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/account/draft?userId=1&accountId=1&valueDraft=50",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"account",
+								"draft"
+							],
+							"query": [
+								{
+									"key": "userId",
+									"value": "1"
+								},
+								{
+									"key": "accountId",
+									"value": "1"
+								},
+								{
+									"key": "valueDraft",
+									"value": "50"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Transfer",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/account/transfer?userIdSending=1&userIdReceiving=2&transferAmount=50",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"account",
+								"transfer"
+							],
+							"query": [
+								{
+									"key": "userIdSending",
+									"value": "1"
+								},
+								{
+									"key": "userIdReceiving",
+									"value": "2"
+								},
+								{
+									"key": "transferAmount",
+									"value": "50"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
