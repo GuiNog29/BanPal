@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { PrismaClient } from "../../../node_modules/.prisma/client";
+import { PrismaClient } from ".prisma/client";
 import * as yup from 'yup';
 
 const prisma = new PrismaClient();
@@ -10,18 +10,22 @@ interface IUser {
   password: string;
 }
 
-const bodyValidation: yup.Schema<IUser> = yup.object().shape({
+const bodyValidationCreate: yup.Schema<IUser> = yup.object().shape({
   name: yup.string().required().min(3),
   email: yup.string().required().email(),
   password: yup.string().required().min(3)
 });
 
+const bodyValidationUpdate = yup.object().shape({
+  name: yup.string().required().min(3),
+  password: yup.string().required().min(3)
+});
 
 export class UserController {
   async createUser(req: Request, res: Response) {
     const { name, email, password } = req.body as IUser;
 
-    const emailExist = await prisma.user.findUnique({ where: { email: email } })
+    const emailExist = await prisma.user.findUnique({ where: { email: email } });
 
     if (emailExist)
       return res.status(400).json({
@@ -29,7 +33,7 @@ export class UserController {
       });
 
     try {
-      await bodyValidation.validate(req.body);
+      await bodyValidationCreate.validate(req.body);
 
       const newUser = await prisma.user.create({
         data: {
@@ -41,8 +45,8 @@ export class UserController {
 
       const bankAccount = await createBankAccount(0, newUser.id);
 
-      return res.status(200).json({
-        message: 'User created successfully', newUser, bankAccount
+      return res.status(201).json({
+        newUser, bankAccount
       });
     } catch (error) {
       const yupError = error as yup.ValidationError;
@@ -68,9 +72,10 @@ export class UserController {
         });
 
       return res.status(200).json({
-        message: 'Registered Users', users
+        users
       });
     } catch (error) {
+      console.log(error)
       return res.status(500).json({
         message: 'Error to get users'
       });
@@ -79,15 +84,15 @@ export class UserController {
 
   async updateUser(req: Request, res: Response) {
     const { userId } = req.query;
-    const { name, email, password } = req.body as IUser;
+    const { name, password } = req.body as IUser;
 
-    const userExist = await prisma.user.findUnique({ where: { id: Number(userId) } })
+    const userExist = await prisma.user.findUnique({ where: { id: Number(userId) } });
 
     if (!userExist)
       return res.status(400).json({ message: 'User not exists' });
 
     try {
-      await bodyValidation.validate(req.body);
+      await bodyValidationUpdate.validate(req.body);
 
       const userUpdated = await prisma.user.update({
         where: {
@@ -95,12 +100,11 @@ export class UserController {
         },
         data: {
           name: name,
-          email: email,
           password: password
         }
-      })
+      });
 
-      return res.status(200).json({ message: 'User updated successfully', userUpdated });
+      return res.status(200).json({ userUpdated });
     } catch (error) {
       const yupError = error as yup.ValidationError;
       return res.status(500).json({
@@ -115,16 +119,16 @@ export class UserController {
     const { userId } = req.query;
 
     try {
-      const deleted = await prisma.user.delete({
+      await prisma.user.delete({
         where: { id: Number(userId) }
       })
-      return res.status(200).json({
-        message: 'User deleted', deleted
-      })
+      return res.status(204).json({
+        message: 'User deleted'
+      });
     } catch (error) {
       return res.status(500).json({
         message: 'Error to delete user'
-      })
+      });
     }
   }
 }

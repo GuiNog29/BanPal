@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { AccountController } from "../../../Presentation/Account/AccountController";
+import { AccountController } from "../../../presentation/account/AccountController";
 
 const routes = Router();
 

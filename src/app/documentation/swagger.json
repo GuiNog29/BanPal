@@ -1,0 +1,336 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "BanPal API",
+    "description": "BanPal is a tribute to me because I was a PayPal user but I never used it, just one day I was banned and they didn't tell me the reason, since then I haven't been able to create new accounts because of the ban",
+    "contact": {
+      "email": "guimathiasgui@gmail.com"
+    },
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/user/createUser": {
+      "post": {
+        "summary": "Create new user",
+        "description": "Route responsible for create a new user",
+        "tags": [
+          "User"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              },
+              "examples": {
+                "user": {
+                  "value": {
+                    "name": "Guilherme Mathias",
+                    "email": "guimathiasgui@gmail.com",
+                    "password": "123456"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/getAllUsers": {
+      "get": {
+        "summary": "Get All users registered",
+        "description": "Route responsible for get all users registered.",
+        "tags": [
+          "User"
+        ],
+        "responses": {}
+      }
+    },
+    "/user/updateUser": {
+      "put": {
+        "summary": "Update user data",
+        "description": "Route responsible for update user data.",
+        "tags": [
+          "User"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "User id for update",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              },
+              "examples": {
+                "user": {
+                  "value": {
+                    "name": "Teste",
+                    "password": "123456"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/deleteUser": {
+      "delete": {
+        "summary": "Delete user",
+        "description": "Route responsible for delete user for system.",
+        "tags": [
+          "User"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "User id for delete",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/account/deposit": {
+      "put": {
+        "summary": "Deposit for account",
+        "description": "Route responsible for deposito in account",
+        "tags": [
+          "Account"
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "query",
+            "description": "User Id for Deposit in account",
+            "required": true
+          },
+          {
+            "name": "accountId",
+            "in": "query",
+            "description": "Account Id for Deposit in account",
+            "required": true
+          },
+          {
+            "name": "valueDeposit",
+            "in": "query",
+            "description": "Value for Deposit in account",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Account"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/account/balance": {
+      "get": {
+        "summary": "Deposit for account",
+        "description": "Route responsible for get all users registered.",
+        "tags": [
+          "Account"
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "query",
+            "description": "User Id for get balance",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Account"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/account/draft": {
+      "put": {
+        "summary": "Draft for account",
+        "description": "Route responsible for draft in account.",
+        "tags": [
+          "Account"
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "query",
+            "description": "User Id for Draft in account",
+            "required": true
+          },
+          {
+            "name": "accountId",
+            "in": "query",
+            "description": "Account Id for Draft in account",
+            "required": true
+          },
+          {
+            "name": "valueDraft",
+            "in": "query",
+            "description": "Value for Draft in account",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Account"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/account/transfer": {
+      "put": {
+        "summary": "Transfer between accounts",
+        "description": "Route responsible for transfer between accounts.",
+        "tags": [
+          "Account"
+        ],
+        "parameters": [
+          {
+            "name": "userIdSending",
+            "in": "query",
+            "description": "User Id Sending for transfer value",
+            "required": true
+          },
+          {
+            "name": "userIdReceiving",
+            "in": "query",
+            "description": "User Id Receiving for transfer value",
+            "required": true
+          },
+          {
+            "name": "transferAmount",
+            "in": "query",
+            "description": "Transfer Amount for transfer value",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Account"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        }
+      },
+      "Account": {
+        "type": "object",
+        "properties": {
+          "balance": {
+            "type": "int"
+          }
+        }
+      }
+    }
+  }
+}
