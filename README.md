@@ -5,7 +5,7 @@ O BanPal é uma homenagem a mim porque eu era usuário do PayPal mas nunca usei,
 And i'm using for study and pratice
 
 Instalação
-Tendo docker instalado no seu PC, inicie o
+Tendo docker instalado no seu PC
 Na raiz do projeto execute os seguintes comandos
 
 npm run up:dev
