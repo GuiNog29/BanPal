@@ -6,8 +6,11 @@
   "scripts": {
     "dev": "ts-node-dev --poll src/App/server.ts",
     "build": "rimraf ./dist && tsc",
-    "start": "npm run build && nodemon dist/App/server.js",
-    "dev2": "nodemon src/App/server.ts"
+    "start": "npm run build && nodemon dist/app/server.js",
+    "up:dev": "npm i && npm run build && docker-compose --env-file .env up -d && npx prisma generate && npm run dev"
+  },
+  "prisma": {
+    "seed": "node --loader ts-node/esm prisma/seed.ts"
   },
   "keywords": [],
   "author": "",
