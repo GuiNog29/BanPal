@@ -1,12 +1,10 @@
 import * as Swagger from 'swagger-ui-express';
-// import * as dotenv from 'dotenv';
 import express from 'express';
-import routesAccount from './routes/account';
-import routesUser from './routes/user';
+import routesAccount from './routes/Account';
+import routesUser from './routes/User';
 import * as swaggerDocument from '../app/documentation/swagger.json';
 
 const app = express();
-// dotenv.config();
 
 app.use(express.json());
 
