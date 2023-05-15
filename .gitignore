@@ -6,6 +6,7 @@
 *.lock
 *.vsidx
 dist/*
+.idea
 # Visual Studio 2015
 .vs/config/applicationhost.config
 
