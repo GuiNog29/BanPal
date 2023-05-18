@@ -1,14 +1,12 @@
+import { AccountRepository } from './../Account/AccountRepository';
 import { PrismaClient } from "@prisma/client";
 import { User } from "../../../Domain/User/Entity/User";
-import { IUserRepository } from "./Interface/IUserRepository";
-import { Account } from "../../../Domain/Account/Entity/Account";
 
 const prisma = new PrismaClient();
+const accountRepository = new AccountRepository;
 
-export class UserRepository implements IUserRepository {
-  
-  async createUser(user: User): Promise<User> {
-
+export class UserRepository {
+  async createUser(user: User) {
     const newUser = await prisma.user.create({
       data: {
         name: user.name,
@@ -17,10 +15,12 @@ export class UserRepository implements IUserRepository {
       }
     });
 
-    return newUser;
+    const newAccountUser = await accountRepository.createAccount(0, newUser.id)
+
+    return { newUser, newAccountUser };
   }
 
-  async getAllUsers(): Promise<User & { account: Account | null; }> {
+  async getAllUsers() {
     const users = await prisma.user.findMany({
       include: {
         account: true,
@@ -31,12 +31,26 @@ export class UserRepository implements IUserRepository {
   }
 
 
-  updateUser(user: User): Promise<User> {
-    throw new Error("Method not implemented.");
+  async updateUser(user: User) {
+    const userUpdated = await prisma.user.update({
+      where: {
+        id: Number(user.id)
+      },
+      data: {
+        name: user.name,
+        password: user.password
+      }
+    });
+
+    return userUpdated;
   }
 
-  deleteUser(id: string): Promise<User> {
-    throw new Error("Method not implemented.");
+  async deleteUser(userId: string) {
+    await prisma.user.delete({
+      where: { id: Number(userId) }
+    })
+
+    return true;
   }
-  
 }
+
