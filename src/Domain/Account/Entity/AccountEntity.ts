@@ -1,10 +1,9 @@
-import { User } from "../../User/Entity/User";
+import { User } from "../../User/Entity/UserEntity";
 
 export class Account{
   accountId: number;
   balance: number;
   userId: User;
-
 
   constructor(accountId: number, balance: number, userId: User) {
     this.accountId = accountId;
