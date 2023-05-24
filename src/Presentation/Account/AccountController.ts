@@ -8,6 +8,7 @@ export class AccountController {
     const { userId } = req.query;
 
     try {
+
       const userExist = await prisma.user.findUnique({ where: { id: Number(userId) } })
 
       if (!userExist)
