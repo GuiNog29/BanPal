@@ -1,4 +1,4 @@
-import { Account } from "../../Account/Entity/Account";
+import { Account } from "../../Account/Entity/AccountEntity";
 
 export class User {
   id: number;
