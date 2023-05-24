@@ -1,6 +1,6 @@
 import { AccountRepository } from './../Account/AccountRepository';
 import { PrismaClient } from "@prisma/client";
-import { User } from "../../../Domain/User/Entity/User";
+import { User } from "../../../Domain/User/Entity/UserEntity";
 
 const prisma = new PrismaClient();
 const accountRepository = new AccountRepository;
@@ -50,9 +50,9 @@ export class UserRepository {
     return userUpdated;
   }
 
-  async deleteUser(userId: string) {
+  async deleteUser(userId: number) {
     await prisma.user.delete({
-      where: { id: Number(userId) }
+      where: { id: userId }
     })
 
     return true;
