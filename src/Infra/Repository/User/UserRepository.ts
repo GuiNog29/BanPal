@@ -4,9 +4,14 @@ import { User } from "../../../Domain/User/Entity/User";
 
 const prisma = new PrismaClient();
 const accountRepository = new AccountRepository;
+let mensagemErro = '';
 
 export class UserRepository {
   async createUser(user: User) {
+
+    if(await this.emailExist(user.email))
+      return false;
+
     const newUser = await prisma.user.create({
       data: {
         name: user.name,
@@ -51,6 +56,15 @@ export class UserRepository {
     })
 
     return true;
+  }
+
+  async emailExist(email: string){
+    const emailExist = await prisma.user.findUnique({ where: { email: email } });
+
+    if (emailExist)
+      return mensagemErro = 'Email already exists';
+
+    false;
   }
 }
 
