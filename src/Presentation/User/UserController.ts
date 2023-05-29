@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { PrismaClient } from ".prisma/client";
 import * as yup from 'yup';
+import UserRepository from "../../Infra/Repository/User/UserRepository";
 
 const prisma = new PrismaClient();
 
@@ -35,18 +36,10 @@ export class UserController {
     try {
       await bodyValidationCreate.validate(req.body);
 
-      const newUser = await prisma.user.create({
-        data: {
-          name: name,
-          email: email,
-          password: password
-        }
-      });
-
-      const bankAccount = await createBankAccount(0, newUser.id);
+      const newUser = await UserRepository.createUser(req.body);
 
       return res.status(201).json({
-        newUser, bankAccount
+        newUser
       });
     } catch (error) {
       const yupError = error as yup.ValidationError;
