@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { PrismaClient } from ".prisma/client";
 import * as yup from 'yup';
-import { UserRepository } from "../../Infra/Repository/User/UserRepository";
+import UserRepository from "../../Infra/Repository/User/UserRepository";
 
 const prisma = new PrismaClient();
 
@@ -23,17 +23,13 @@ const bodyValidationUpdate = yup.object().shape({
 });
 
 export class UserController {
-  private userRepository: UserRepository;
 
-  constructor(){
-    this.userRepository = new UserRepository();
-  }
 
   async createUser(req: Request, res: Response) {
     try {
       await bodyValidationCreate.validate(req.body);
 
-      const newUser = await this.userRepository.createUser(req.body);
+      const newUser = await UserRepository.createUser(req.body);
 
       return res.status(201).json({
         newUser
