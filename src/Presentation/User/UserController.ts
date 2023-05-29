@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { PrismaClient } from ".prisma/client";
 import * as yup from 'yup';
+import UserRepository from "../../Infra/Repository/User/UserRepository";
 
 const prisma = new PrismaClient();
 
@@ -22,31 +23,16 @@ const bodyValidationUpdate = yup.object().shape({
 });
 
 export class UserController {
+
+
   async createUser(req: Request, res: Response) {
-    const { name, email, password } = req.body as IUser;
-
-    const emailExist = await prisma.user.findUnique({ where: { email: email } });
-
-    if (emailExist)
-      return res.status(400).json({
-        message: 'Email already exists'
-      });
-
     try {
       await bodyValidationCreate.validate(req.body);
 
-      const newUser = await prisma.user.create({
-        data: {
-          name: name,
-          email: email,
-          password: password
-        }
-      });
-
-      const bankAccount = await createBankAccount(0, newUser.id);
+      const newUser = await UserRepository.createUser(req.body);
 
       return res.status(201).json({
-        newUser, bankAccount
+        newUser
       });
     } catch (error) {
       const yupError = error as yup.ValidationError;
@@ -131,16 +117,5 @@ export class UserController {
       });
     }
   }
-}
-
-async function createBankAccount(balance: number, userId: number) {
-  const bankAccount = await prisma.account.create({
-    data: {
-      balance: balance,
-      userId: userId
-    }
-  });
-
-  return bankAccount;
 }
 
