@@ -24,15 +24,6 @@ const bodyValidationUpdate = yup.object().shape({
 
 export class UserController {
   async createUser(req: Request, res: Response) {
-    const { name, email, password } = req.body as IUser;
-
-    const emailExist = await prisma.user.findUnique({ where: { email: email } });
-
-    if (emailExist)
-      return res.status(400).json({
-        message: 'Email already exists'
-      });
-
     try {
       await bodyValidationCreate.validate(req.body);
 
