@@ -2,15 +2,11 @@ import { AccountRepository } from './../Account/AccountRepository';
 import { PrismaClient } from "@prisma/client";
 import { User } from "../../../Domain/User/Entity/User";
 
-const accountRepository = new AccountRepository;
-let mensagemErro = '';
 const prisma = new PrismaClient();
+const accountRepository = new AccountRepository;
 
-class UserRepository {
+export class UserRepository {
   async createUser(user: User) {
-    if(await this.emailExist(user.email))
-      return mensagemErro;
-
     const newUser = await prisma.user.create({
       data: {
         name: user.name,
@@ -49,22 +45,12 @@ class UserRepository {
     return userUpdated;
   }
 
-  async deleteUser(userId: number) {
+  async deleteUser(userId: string) {
     await prisma.user.delete({
-      where: { id: userId }
+      where: { id: Number(userId) }
     })
 
     return true;
   }
-
-  async emailExist(email: string){
-    const emailExist = await prisma.user.findUnique({ where: { email: email } });
-
-    if (emailExist)
-      return mensagemErro = 'Email already exists';
-
-    false;
-  }
 }
 
-export default new UserRepository;
