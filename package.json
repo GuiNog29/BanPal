@@ -8,7 +8,8 @@
     "dev2": "npx prisma generate && npx prisma migrate dev && npx prisma db seed && ts-node-dev --poll src/app/server.ts",
     "build": "rimraf ./dist && tsc",
     "start": "npm run build && nodemon dist/app/server.js",
-    "up:dev": "npm i && npm run build && npx prisma migrate dev && npm run dev"
+    "up:dev": "npm i && npm run build && npx prisma migrate dev && npm run dev",
+    "develop": "docker-compose run --rm --service-ports app"
   },
   "prisma": {
     "seed": "node --loader ts-node/esm prisma/seed.ts"
