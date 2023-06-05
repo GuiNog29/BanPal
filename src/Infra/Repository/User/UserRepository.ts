@@ -4,12 +4,10 @@ import { User } from "../../../Domain/User/Entity/User";
 
 const prisma = new PrismaClient();
 const accountRepository = new AccountRepository;
-let mensagemErro = '';
 
 class UserRepository {
   async createUser(user: User) {
-    if(await this.emailExist(user.email))
-      return mensagemErro;
+    await this.emailExist(user.email);
 
     const newUser = await prisma.user.create({
       data: {
@@ -30,15 +28,17 @@ class UserRepository {
         account: true,
       }
     });
+    console.log('aoba')
 
     return users;
   }
 
+  async updateUser(userId: number, user: User) {
+    await this.userExists(userId);
 
-  async updateUser(user: User) {
     const userUpdated = await prisma.user.update({
       where: {
-        id: Number(user.id)
+        id: userId
       },
       data: {
         name: user.name,
@@ -50,20 +50,37 @@ class UserRepository {
   }
 
   async deleteUser(userId: number) {
+    await this.userExists(userId);
+
     await prisma.user.delete({
-      where: { id: userId }
+      where: {
+        id: userId
+      }
     })
 
     return true;
   }
 
-  async emailExist(email: string){
-    const emailExist = await prisma.user.findUnique({ where: { email: email } });
+  async emailExist(email: string) {
+    const emailExist = await prisma.user.findUnique({
+      where: {
+        email: email
+      }
+    });
 
     if (emailExist)
-      return mensagemErro = 'Email already exists';
+      throw new Error('Email already exists');
+  }
 
-    false;
+  async userExists(userId: number) {
+    const userExist = await prisma.user.findUnique({
+      where: {
+        id: userId
+      }
+    });
+
+    if (!userExist)
+      throw new Error('User not exists');
   }
 }
 
