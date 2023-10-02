@@ -7,7 +7,5 @@
   "database": "postgres",
   "entities": ["src/Entities/*.ts"],
   "synchronize": true,
-  "logging": true,
-  "emitDecoratorMetadata": true,
-  "experimentalDecorators": true
+  "logging": true
 }
