@@ -7,6 +7,7 @@
 *.vsidx
 dist/*
 .idea
+data
 # Visual Studio 2015
 .vs/config/applicationhost.config
 
