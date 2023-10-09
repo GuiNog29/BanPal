@@ -3,6 +3,7 @@ import express from 'express';
 import routesAccount from './routes/Account';
 import routesUser from './routes/User';
 import * as swaggerDocument from '../app/documentation/swagger.json';
+import "reflect-metadata";
 
 const app = express();
 

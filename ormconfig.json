@@ -5,7 +5,15 @@
   "username": "postgres",
   "password": "154826",
   "database": "postgres",
-  "entities": ["src/Entities/*.ts"],
-  "synchronize": true,
-  "logging": true
+  "logging": true,
+  "entities": [
+    "./src/Domain/Entities/*.ts"
+  ],
+  "migrations": [
+    "./src/Shared/Typeorm/Migrations/*.ts"
+  ],
+  "cli": {
+    "entitiesDir": "./src/Domain/Entities",
+    "migrationsDir": "./src/Shared/Typeorm/Migrations"
+  }
 }
