@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner, Table, TableForeignKey } from "typeorm"
+import { MigrationInterface, QueryRunner, Table } from "typeorm"
 
 export class CreateAccount1696811819016 implements MigrationInterface {
 
@@ -24,21 +24,10 @@ export class CreateAccount1696811819016 implements MigrationInterface {
         }
       ]
     }), true);
-
-    await queryRunner.createForeignKey(
-      "account",
-      new TableForeignKey({
-        columnNames: ["userId"],
-        referencedColumnNames: ["id"],
-        referencedTableName: "user",
-        onDelete: "CASCADE",
-      })
-    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.dropForeignKey("Account", "FK_Account_User");
     await queryRunner.dropTable("Account");
   }
-
 }

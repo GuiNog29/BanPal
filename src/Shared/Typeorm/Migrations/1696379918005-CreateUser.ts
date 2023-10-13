@@ -28,21 +28,10 @@ export class CreateUser1696379918005 implements MigrationInterface {
         },
       ]
     }), true);
-
-    await queryRunner.createForeignKey(
-      "User",
-      new TableForeignKey({
-        columnNames: ["accountId"],
-        referencedColumnNames: ["id"],
-        referencedTableName: "account",
-        onDelete: "CASCADE"
-      })
-    )
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.dropForeignKey("User", "FK_User_Account");
     await queryRunner.dropTable("User");
   }
-
 }
