@@ -1,25 +1,32 @@
+import { Repository } from 'typeorm';
 import { User } from '../../../Domain/Entities/User';
 import { AccountRepository } from './../Account/AccountRepository';
-import { PrismaClient } from "@prisma/client";
+import { Account } from '../../../Domain/Entities/Account';
+import { IUserRepository } from './Interface/IUserRepository';
+import { dataSource } from '../../../Shared/Typeorm';
 
-const prisma = new PrismaClient();
-const accountRepository = new AccountRepository;
+export class UserRepository implements IUserRepository {
+  private userRepository: Repository<User>;
+  private accountRepository: AccountRepository;
 
-class UserRepository {
-  async createUser(user: User) {
+  constructor() {
+    this.userRepository = dataSource.getRepository(User);
+  }
+
+  async createUser(user: User): Promise<[User, Account]> {
     await this.emailExist(user.email);
 
-    const newUser = await prisma.user.create({
-      data: {
-        name: user.name,
-        email: user.email,
-        password: user.password
-      }
+    const newUser = this.userRepository.create({
+      name: user.name,
+      email: user.email,
+      password: user.password
     });
 
-    const newAccountUser = await accountRepository.createAccount(0, newUser.id)
+    await this.userRepository.save(newUser);
 
-    return { newUser, newAccountUser };
+    const newAccountUser = await this.accountRepository.createAccount(0, newUser.id)
+
+    return [newUser, newAccountUser];
   }
 
   async getAllUsers() {
@@ -61,26 +68,23 @@ class UserRepository {
     return true;
   }
 
-  async emailExist(email: string) {
-    const emailExist = await prisma.user.findUnique({
-      where: {
-        email: email
-      }
+  async emailExist(email: string): Promise<User | null> {
+    const user = await this.userRepository.findOneBy({
+      email
     });
 
-    if (emailExist)
+    if (user)
       throw new Error('Email already exists');
+
+    return user;
   }
 
-  async userExists(userId: number) {
-    const userExist = await prisma.user.findUnique({
-      where: {
-        id: userId
-      }
+  async userExists(userId: number): Promise<User | null> {
+    const userExist = await this.userRepository.findOneBy({
+      id: userId
     });
 
-    if (!userExist)
-      throw new Error('User not exists');
+    return userExist;
   }
 }
 
