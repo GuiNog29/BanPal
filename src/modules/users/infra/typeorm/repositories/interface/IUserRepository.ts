@@ -1,6 +1,6 @@
-import { User } from "../../../../Domain/Entities/User";
-import { Account } from "../../../../Domain/Entities/Account";
 import { UpdateResult } from "typeorm";
+import { User } from "../../entities/User";
+import { Account } from "../../../../../accounts/infra/typeorm/entities/Account";
 
 export interface IUserRepository {
   createUser(user: User): Promise<[User, Account]>

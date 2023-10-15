@@ -1,9 +1,9 @@
 import { Repository, UpdateResult } from 'typeorm';
-import { User } from '../../../Domain/Entities/User';
-import { AccountRepository } from './../Account/AccountRepository';
-import { Account } from '../../../Domain/Entities/Account';
-import { IUserRepository } from './Interface/IUserRepository';
-import { dataSource } from '../../../Shared/Typeorm';
+import { User } from '../entities/User';
+import { IUserRepository } from './interface/IUserRepository';
+import { Account } from '../../../../accounts/infra/typeorm/entities/Account';
+import { AccountRepository } from '../../../../accounts/infra/typeorm/repositories/AccountRepository';
+import { dataSource } from '../../../../../Shared/Typeorm';
 
 export class UserRepository implements IUserRepository {
   private userRepository: Repository<User>;

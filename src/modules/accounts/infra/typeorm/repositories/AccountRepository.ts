@@ -1,8 +1,8 @@
-import { Repository } from "typeorm";
-import { Account } from "../../../Domain/Entities/Account";
-import { dataSource } from '../../../Shared/Typeorm';
-import { IAccountRepository } from "./Interface/IAccountRepository";
-import { UserRepository } from "../User/UserRepository";
+import { Repository, UpdateResult } from "typeorm";
+import { IAccountRepository } from "./interface/IAccountRepository";
+import { Account } from "../entities/Account";
+import { UserRepository } from "../../../../users/infra/typeorm/repositories/UserRepository";
+import { dataSource } from "../../../../../Shared/Typeorm";
 
 const DEPOSIT_OPERATION = 1
 
@@ -29,11 +29,11 @@ export class AccountRepository implements IAccountRepository {
       throw new Error('User does not exists');
   }
 
-  async deposit(userId: number, valueDeposit: number) {
+  async deposit(userId: number, valueDeposit: number) : Promise<UpdateResult> {
     return await this.bankOperation(userId, valueDeposit, DEPOSIT_OPERATION);
   }
 
-  async getBalance(userId: number): Promise<any> {
+  async getBalance(userId: number): Promise<number> {
     return (await this.getAccount(userId))?.balance;
   }
 
@@ -46,7 +46,7 @@ export class AccountRepository implements IAccountRepository {
     return account;
   }
 
-  async bankOperation(userId: number, valueDeposit: number, depositOperation: number) {
+  async bankOperation(userId: number, valueDeposit: number, depositOperation: number) : Promise<UpdateResult> {
     const currentAccount = await this.getAccount(userId);
 
     switch (depositOperation) {
@@ -61,7 +61,7 @@ export class AccountRepository implements IAccountRepository {
     return this.updateBalance(currentAccount.id, currentAccount.balance);
   }
 
-  async updateBalance(accountId: number, newBalance: number) {
+  async updateBalance(accountId: number, newBalance: number) : Promise<UpdateResult> {
     return this.accountRepository.update({ id: accountId }, { balance: newBalance, });
   }
 }
