@@ -7,6 +7,6 @@ export interface IUserRepository {
   getAllUsers() : Promise<User[]>
   updateUser(userId: number, user: User) : Promise<UpdateResult>
   deleteUser(userId: number) : Promise<boolean>
-  emailExist(email: string): Promise<User | null>
-  userExists(userId: number): Promise<User | null>
+  getExistEmail(email: string): Promise<void>
+  getExistUser(userId: number): Promise<User | null>
 }
