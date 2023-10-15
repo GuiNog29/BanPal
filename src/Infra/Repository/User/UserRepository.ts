@@ -1,4 +1,4 @@
-import { Repository } from 'typeorm';
+import { Repository, UpdateResult } from 'typeorm';
 import { User } from '../../../Domain/Entities/User';
 import { AccountRepository } from './../Account/AccountRepository';
 import { Account } from '../../../Domain/Entities/Account';
@@ -29,40 +29,32 @@ export class UserRepository implements IUserRepository {
     return [newUser, newAccountUser];
   }
 
-  async getAllUsers() {
-    const users = await prisma.user.findMany({
-      include: {
-        account: true,
-      }
-    });
-    console.log('aoba')
-
+  async getAllUsers(): Promise<User[]> {
+    const users = await this.userRepository.find();
     return users;
   }
 
-  async updateUser(userId: number, user: User) {
+  async updateUser(userId: number, user: User) : Promise<UpdateResult>{
     await this.userExists(userId);
 
-    const userUpdated = await prisma.user.update({
-      where: {
+    const userUpdated = await this.userRepository.update(
+      {
         id: userId
       },
-      data: {
+      {
         name: user.name,
         password: user.password
       }
-    });
+    );
 
     return userUpdated;
   }
 
-  async deleteUser(userId: number) {
+  async deleteUser(userId: number) : Promise<boolean> {
     await this.userExists(userId);
 
-    await prisma.user.delete({
-      where: {
-        id: userId
-      }
+    await this.userRepository.delete({
+      id: userId
     })
 
     return true;
