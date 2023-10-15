@@ -1,22 +1,35 @@
-import { PrismaClient } from "@prisma/client";
+import { Repository } from "typeorm";
+import { Account } from "../../../Domain/Entities/Account";
+import { dataSource } from '../../../Shared/Typeorm';
+import { IAccountRepository } from "./Interface/IAccountRepository";
+import { UserRepository } from "../User/UserRepository";
 
-const prisma = new PrismaClient();
 const depositOperation = 1
 
-export class AccountRepository {
+export class AccountRepository implements IAccountRepository {
+  private accountRepository: Repository<Account>;
+  private userRepository: UserRepository;
 
-  async createAccount(balance: number, userId: number) {
-    const bankAccount = await prisma.account.create({
-      data: {
-        balance: balance,
-        userId: userId
-      }
-    });
-
-    return bankAccount;
+  constructor() {
+    this.accountRepository = dataSource.getRepository(Account);
   }
 
-  async getBalance(userId: number){
+  async createAccount(balance: number, userId: number): Promise<Account> {
+    const user = await this.userRepository.userExists(userId);
+    if (user) {
+      const bankAccount = this.accountRepository.create({
+        balance: balance,
+        user: user
+      });
+
+      await this.accountRepository.save(bankAccount);
+
+      return bankAccount;
+    } else
+      throw new Error('User not exists');
+  }
+
+  async getBalance(userId: number) {
     const balance = await prisma.account.findFirst({
       where: {
         userId: userId
@@ -26,13 +39,13 @@ export class AccountRepository {
     return balance?.balance;
   }
 
-  async deposit(userId: number, valueDeposit: number){
+  async deposit(userId: number, valueDeposit: number) {
     const newBalance = await this.OperationBank(userId, valueDeposit, depositOperation)
 
     return newBalance;
   }
 
-  async getAccount(userId: number){
+  async getAccount(userId: number) {
     let currentAccount = await prisma.account.findFirst({
       where: {
         userId: userId
