@@ -1,87 +1,60 @@
+import { Repository, UpdateResult } from 'typeorm';
 import { User } from '../../../Domain/Entities/User';
 import { AccountRepository } from './../Account/AccountRepository';
-import { PrismaClient } from "@prisma/client";
+import { Account } from '../../../Domain/Entities/Account';
+import { IUserRepository } from './Interface/IUserRepository';
+import { dataSource } from '../../../Shared/Typeorm';
 
-const prisma = new PrismaClient();
-const accountRepository = new AccountRepository;
+export class UserRepository implements IUserRepository {
+  private userRepository: Repository<User>;
 
-class UserRepository {
-  async createUser(user: User) {
-    await this.emailExist(user.email);
-
-    const newUser = await prisma.user.create({
-      data: {
-        name: user.name,
-        email: user.email,
-        password: user.password
-      }
-    });
-
-    const newAccountUser = await accountRepository.createAccount(0, newUser.id)
-
-    return { newUser, newAccountUser };
+  constructor(private accountRepository: AccountRepository) {
+    this.userRepository = dataSource.getRepository(User);
   }
 
-  async getAllUsers() {
-    const users = await prisma.user.findMany({
-      include: {
-        account: true,
-      }
-    });
-    console.log('aoba')
+  async createUser(user: User): Promise<[User, Account]> {
+    await this.getExistEmail(user.email);
 
-    return users;
-  }
-
-  async updateUser(userId: number, user: User) {
-    await this.userExists(userId);
-
-    const userUpdated = await prisma.user.update({
-      where: {
-        id: userId
-      },
-      data: {
-        name: user.name,
-        password: user.password
-      }
+    const newUser = this.userRepository.create({
+      name: user.name,
+      email: user.email,
+      password: user.password
     });
 
-    return userUpdated;
+    await this.userRepository.save(newUser);
+
+    const newAccountUser = await this.accountRepository.createAccount(0, newUser.id);
+
+    return [newUser, newAccountUser];
   }
 
-  async deleteUser(userId: number) {
-    await this.userExists(userId);
-
-    await prisma.user.delete({
-      where: {
-        id: userId
-      }
-    })
-
-    return true;
+  async getAllUsers(): Promise<User[]> {
+    return await this.userRepository.find();
   }
 
-  async emailExist(email: string) {
-    const emailExist = await prisma.user.findUnique({
-      where: {
-        email: email
-      }
+  async updateUser(userId: number, user: User): Promise<UpdateResult> {
+    await this.getExistUser(userId);
+
+    return await this.userRepository.update(userId, {
+      name: user.name,
+      password: user.password
     });
+  }
 
-    if (emailExist)
+  async deleteUser(userId: number): Promise<boolean> {
+    await this.getExistUser(userId);
+    const deleteResult = await this.userRepository.delete(userId);
+    return deleteResult.affected === 1;
+  }
+
+  async getExistEmail(email: string): Promise<void> {
+    const user = await this.userRepository.findOneBy({ email });
+
+    if (user)
       throw new Error('Email already exists');
   }
 
-  async userExists(userId: number) {
-    const userExist = await prisma.user.findUnique({
-      where: {
-        id: userId
-      }
-    });
-
-    if (!userExist)
-      throw new Error('User not exists');
+  async getExistUser(userId: number): Promise<User | null> {
+    return await this.userRepository.findOneBy({ id: userId });
   }
 }
-
-export default new UserRepository;

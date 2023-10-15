@@ -1,75 +1,67 @@
-import { PrismaClient } from "@prisma/client";
+import { Repository } from "typeorm";
+import { Account } from "../../../Domain/Entities/Account";
+import { dataSource } from '../../../Shared/Typeorm';
+import { IAccountRepository } from "./Interface/IAccountRepository";
+import { UserRepository } from "../User/UserRepository";
 
-const prisma = new PrismaClient();
-const depositOperation = 1
+const DEPOSIT_OPERATION = 1
 
-export class AccountRepository {
+export class AccountRepository implements IAccountRepository {
+  private accountRepository: Repository<Account>;
 
-  async createAccount(balance: number, userId: number) {
-    const bankAccount = await prisma.account.create({
-      data: {
+  constructor(private userRepository: UserRepository) {
+    this.accountRepository = dataSource.getRepository(Account);
+  }
+
+  async createAccount(balance: number, userId: number): Promise<Account> {
+    const user = await this.userRepository.getExistUser(userId);
+
+    if (user) {
+      const bankAccount = this.accountRepository.create({
         balance: balance,
-        userId: userId
-      }
-    });
+        user: user
+      });
 
-    return bankAccount;
+      await this.accountRepository.save(bankAccount);
+
+      return bankAccount;
+    } else
+      throw new Error('User does not exists');
   }
 
-  async getBalance(userId: number){
-    const balance = await prisma.account.findFirst({
-      where: {
-        userId: userId
-      }
-    });
-
-    return balance?.balance;
+  async deposit(userId: number, valueDeposit: number) {
+    return await this.bankOperation(userId, valueDeposit, DEPOSIT_OPERATION);
   }
 
-  async deposit(userId: number, valueDeposit: number){
-    const newBalance = await this.OperationBank(userId, valueDeposit, depositOperation)
-
-    return newBalance;
+  async getBalance(userId: number): Promise<any> {
+    return (await this.getAccount(userId))?.balance;
   }
 
-  async getAccount(userId: number){
-    let currentAccount = await prisma.account.findFirst({
-      where: {
-        userId: userId
-      }
-    });
+  async getAccount(userId: number) : Promise<Account> {
+    let account = await this.accountRepository.findOneBy({ user: { id: userId } });
 
-    return currentAccount;
+    if (!account)
+      throw new Error('Account not exists');
+
+    return account;
   }
 
-  async OperationBank(userId: number, valueDeposit: number, depositOperation: number) {
-
+  async bankOperation(userId: number, valueDeposit: number, depositOperation: number) {
     const currentAccount = await this.getAccount(userId);
 
     switch (depositOperation) {
-      case 1:
-        currentAccount!.balance += valueDeposit;
+      case DEPOSIT_OPERATION:
+        currentAccount.balance += valueDeposit;
         break;
 
       default:
         break;
     }
 
-    const updatedBalance = this.updateBalance(currentAccount!.id, currentAccount!.balance);
-
-    return updatedBalance;
+    return this.updateBalance(currentAccount.id, currentAccount.balance);
   }
-
 
   async updateBalance(accountId: number, newBalance: number) {
-    return await prisma.account.update({
-      where: {
-        id: accountId
-      },
-      data: {
-        balance: newBalance,
-      }
-    });
+    return this.accountRepository.update({ id: accountId }, { balance: newBalance, });
   }
-
 }
