@@ -4,6 +4,7 @@ import { IUserRepository } from './interface/IUserRepository';
 import { Account } from '../../../../accounts/infra/typeorm/entities/Account';
 import { AccountRepository } from '../../../../accounts/infra/typeorm/repositories/AccountRepository';
 import { dataSource } from '../../../../../Shared/Typeorm';
+import { ICreateUser } from '../../../domain/models/ICreateUser';
 
 export class UserRepository implements IUserRepository {
   private userRepository: Repository<User>;
@@ -12,49 +13,43 @@ export class UserRepository implements IUserRepository {
     this.userRepository = dataSource.getRepository(User);
   }
 
-  async createUser(user: User): Promise<[User, Account]> {
-    await this.getExistEmail(user.email);
-
+  async create({ name, email, password }: ICreateUser): Promise<User> {
     const newUser = this.userRepository.create({
-      name: user.name,
-      email: user.email,
-      password: user.password
+      name: name,
+      email: email,
+      password: password
     });
 
     await this.userRepository.save(newUser);
+    await this.accountRepository.createAccount(0, newUser.id);
 
-    const newAccountUser = await this.accountRepository.createAccount(0, newUser.id);
-
-    return [newUser, newAccountUser];
+    return newUser;
   }
 
-  async getAllUsers(): Promise<User[]> {
+  async getAll(): Promise<User[]> {
     return await this.userRepository.find();
   }
 
-  async updateUser(userId: number, user: User): Promise<UpdateResult> {
-    await this.getExistUser(userId);
+  async update(userId: number, { name, password }: ICreateUser): Promise<UpdateResult> {
+    await this.getUserById(userId);
 
     return await this.userRepository.update(userId, {
-      name: user.name,
-      password: user.password
+      name: name,
+      password: password
     });
   }
 
-  async deleteUser(userId: number): Promise<boolean> {
-    await this.getExistUser(userId);
+  async delete(userId: number): Promise<boolean> {
+    await this.getUserById(userId);
     const deleteResult = await this.userRepository.delete(userId);
     return deleteResult.affected === 1;
   }
 
-  async getExistEmail(email: string): Promise<void> {
-    const user = await this.userRepository.findOneBy({ email });
-
-    if (user)
-      throw new Error('Email already exists');
+  async getUserByEmail(email: string): Promise<User | null> {
+    return await this.userRepository.findOneBy({ email });
   }
 
-  async getExistUser(userId: number): Promise<User | null> {
+  async getUserById(userId: number): Promise<User | null> {
     return await this.userRepository.findOneBy({ id: userId });
   }
 }

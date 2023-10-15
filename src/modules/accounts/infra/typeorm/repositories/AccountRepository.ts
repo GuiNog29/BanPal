@@ -3,6 +3,7 @@ import { IAccountRepository } from "./interface/IAccountRepository";
 import { Account } from "../entities/Account";
 import { UserRepository } from "../../../../users/infra/typeorm/repositories/UserRepository";
 import { dataSource } from "../../../../../Shared/Typeorm";
+import { AppError } from "../../../../../Shared/Errors/AppError";
 
 const DEPOSIT_OPERATION = 1
 
@@ -14,7 +15,7 @@ export class AccountRepository implements IAccountRepository {
   }
 
   async createAccount(balance: number, userId: number): Promise<Account> {
-    const user = await this.userRepository.getExistUser(userId);
+    const user = await this.userRepository.getUserById(userId);
 
     if (user) {
       const bankAccount = this.accountRepository.create({
@@ -26,7 +27,7 @@ export class AccountRepository implements IAccountRepository {
 
       return bankAccount;
     } else
-      throw new Error('User does not exists');
+      throw new AppError('User does not exists');
   }
 
   async deposit(userId: number, valueDeposit: number) : Promise<UpdateResult> {
@@ -41,7 +42,7 @@ export class AccountRepository implements IAccountRepository {
     let account = await this.accountRepository.findOneBy({ user: { id: userId } });
 
     if (!account)
-      throw new Error('Account not exists');
+      throw new AppError('Account not exists');
 
     return account;
   }

@@ -1,12 +1,12 @@
 import { UpdateResult } from "typeorm";
 import { User } from "../../entities/User";
-import { Account } from "../../../../../accounts/infra/typeorm/entities/Account";
+import { ICreateUser } from "../../../../domain/models/ICreateUser";
 
 export interface IUserRepository {
-  createUser(user: User): Promise<[User, Account]>
-  getAllUsers() : Promise<User[]>
-  updateUser(userId: number, user: User) : Promise<UpdateResult>
-  deleteUser(userId: number) : Promise<boolean>
-  getExistEmail(email: string): Promise<void>
-  getExistUser(userId: number): Promise<User | null>
+  create({ name, email, password }: ICreateUser): Promise<User>
+  getAll() : Promise<User[]>
+  update(userId: number, user: User) : Promise<UpdateResult>
+  delete(userId: number) : Promise<boolean>
+  getUserByEmail(email: string): Promise<User | null>
+  getUserById(userId: number): Promise<User | null>
 }
